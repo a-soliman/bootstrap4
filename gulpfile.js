@@ -17,11 +17,20 @@ const soursemaps	= require('gulp-sourcemaps');
 const _scripts_path = 'src/js/**/*.js';
 const _HTML_path 	= 'src/*.html';
 const _sass_path	= 'src/scss/**/*.scss'
-const _dist_path	= 'dist/'			
+const _dist_path	= 'dist/'
+const _images_path  = 'src/img/*'		
 
 gulp.task('copy', () => {
 	console.log('Starting COPY task')
 	return gulp.src(_HTML_path)
+		.pipe(gulpCopy(_dist_path, {prefix: 1}))
+		.pipe(livereload())
+});
+
+gulp.task('copy_images', () => {
+	console.log('STARTING COPY_IMAGES TASK..')
+	
+	return gulp.src(_images_path)
 		.pipe(gulpCopy(_dist_path, {prefix: 1}))
 		.pipe(livereload())
 });
@@ -70,7 +79,7 @@ gulp.task('scripts', () => {
 		.pipe(livereload())
 })
 
-gulp.task('default', ['copy', 'scripts', 'sass'],() => {
+gulp.task('default', ['copy', 'copy_images','scripts', 'sass'],() => {
 	console.log('Starting DEFAULT task')
 })
 
@@ -79,6 +88,7 @@ gulp.task('server', ['default'],() => {
 	require('./server.js')
 	livereload.listen(35729);
 	gulp.watch(_HTML_path, ['copy'])
+	gulp.watch(_images_path, ['copy_images'])
 	gulp.watch(_scripts_path, ['scripts'])
 	gulp.watch(_sass_path, ['sass'])
 });
